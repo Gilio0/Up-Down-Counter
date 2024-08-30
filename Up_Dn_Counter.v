@@ -9,22 +9,32 @@ module Up_Dn_Counter(
 	output wire  	   Low
 	);
 
+	reg [4:0] counter;
+
 	assign High = &Counter;
 	assign Low = ~|Counter;
 
 	always @(posedge CLK)
 	begin
+		Counter <= counter; 
+	end
+
+	always @(*)
+	begin
 		if (Load) 
 		begin
-			Counter <= IN;
+			Counter = IN;
 		end
 		else if (Down & ~Low)
 		begin
-			Counter <= Counter - 1;
+			Counter = Counter - 1;
 		end
-		else if (Up & ~High) 
+		else if (Up & ~High & ~Down) 
 		begin
-			Counter <= Counter + 1;
+			Counter = Counter + 1;
+		end
+		else begin
+			Counter = Counter;
 		end
 	end
 
